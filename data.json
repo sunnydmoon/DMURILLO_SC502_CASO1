@@ -1,0 +1,29 @@
+{
+  "estudiantes": [
+    {
+      "nombre": "Daniela",
+      "apellidos": "Murillo Delgado",
+      "nota": 95
+    },
+    {
+      "nombre": "Joseph",
+      "apellidos": "Sancho Porras",
+      "nota": 78
+    },
+    {
+      "nombre": "Elsiel",
+      "apellidos": "Serrano Baltodano",
+      "nota": 88
+    },
+    {
+      "nombre": "Aljandro",
+      "apellidos": "Rojas Piedra",
+      "nota": 91
+    },
+    {
+      "nombre": "Daniel",
+      "apellidos": "Méndez Rojas",
+      "nota": 84
+    }
+  ]
+}

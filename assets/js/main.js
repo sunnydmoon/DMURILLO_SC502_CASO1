@@ -1,8 +1,3 @@
-console.log('saludo:', saludo);
-console.log('nombre:', nombre);
-console.log('curso:', curso);
-console.log('institución:', institucion);
-
 // Ejemplo de funciones
 function registrar() {
     console.log('Función registrar ejecutada');
@@ -15,72 +10,128 @@ const mostrar = () => {
 registrar();
 mostrar();
 
-// Esperar que el DOM cargue
-document.addEventListener("DOMContentLoaded", async function () {
-    console.log('Mi página terminó de cargar');
 
-    // Intentar cargar data.json solo si el localStorage está vacío
-    if (!localStorage.getItem('estudiantes')) {
-        try {
-            const response = await fetch('data.json');
-            const data = await response.json();
-            localStorage.setItem('estudiantes', JSON.stringify(data.estudiantes));
-            console.log('Se cargó data.json (estructura inicial).');
-        } catch (error) {
-            console.log('No se pudo cargar data.json:', error);
-        }
-    }
+//Intento de datos ingresados del formulario de manera remota
+const ESTUDIANTES_SEMILLA = [
+  { nombre: 'Daniela', apellidos: 'Murillo Delgado', nota: 95 },
+  { nombre: 'Joseph', apellidos: 'Sancho Porras', nota: 78 },
+  { nombre: 'Elsiel', apellidos: 'Baltonado Serrano', nota: 88 }
+];
+const CLAVE = 'estudiantes';
 
-    // Referencia al formulario
-    const form = document.querySelector('#formEstudiante');
-    form.addEventListener('submit', submitFormulario);
+function leerEstudiantes() {
+  const datos = localStorage.getItem(CLAVE);
+  if (datos) {
+    return JSON.parse(datos);
+  } else {
+    return [];
+  }
+}
 
-    // Cargar registros almacenados al inicio
-    cargarEstudiantes();
+function guardarEstudiantes(lista) {
+  localStorage.setItem(CLAVE, JSON.stringify(lista));
+}
+
+function inicializarDatos() {
+  const lista = leerEstudiantes();
+  if (lista.length === 0) {
+    console.log('No había estudiantes guardados, cargando semilla...');
+    guardarEstudiantes(ESTUDIANTES_SEMILLA);
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('✅ Página cargada completamente');
+
+  inicializarDatos();
+
+  const form = document.querySelector('#formEstudiante');
+  form.addEventListener('submit', manejarFormulario);
+
+  mostrarEstudiantes();
 });
 
+//Carga de datos JSON
+fetch('data.json')
+  .then(res => res.json())
+  .then(json => {
+    console.log('Datos cargados desde data.json:', json.estudiantes);
+    guardarEstudiantes(json.estudiantes);
+    mostrarEstudiantes();
+  })
+  .catch(() => {
+    console.log('No se encontró data.json o no se pudo cargar. Se usará la semilla local.');
+    inicializarDatos();
+    mostrarEstudiantes();
+  });
+
 // Función principal para manejar el formulario
-const submitFormulario = (event) => {
-    event.preventDefault();
-    console.log('Evento submit del formulario ejecutado');
+function manejarFormulario(evento) {
+  evento.preventDefault();
+  console.log('Envío del formulario detectado');
 
-    const form = document.querySelector('#formEstudiante');
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+  const form = document.querySelector('#formEstudiante');
+  const nombre = form.nombre.value.trim();
+  const apellidos = form.apellidos.value.trim();
+  const nota = form.nota.value.trim();
 
-    console.log('Datos obtenidos del formulario:', data);
-    // Validaciones básicas
-     if (!data.nombre || !data.apellidos || !data.nota) {
-        console.log('Error: Debe completar todos los campos antes de registrar.');
-        return;
+  //Lista de estudiantes
+  function mostrarEstudiantes() {
+  const lista = leerEstudiantes();
+  console.log('Lista de estudiantes ingresados:');
+
+  if (lista.length === 0) {
+    console.log('No hay registros guardados.');
+  } else {
+    for (let i = 0; i < lista.length; i++) {
+      console.log(`#${i + 1}: ${lista[i].nombre} ${lista[i].apellidos} - Nota: ${lista[i].nota}`);
     }
+  }
+}
 
-    if (data.nota < 0 || data.nota > 100) {
-        console.log('Error: La nota debe estar entre 0 y 100.');
-        return;
+    // Validaciones
+    if (nombre === '' || apellidos === '' || nota === '') {
+    console.log('Rellene los datos a faltar por favor');
+    return;
+  }
+
+  if (nota < 0 || nota > 100) {
+    console.log('Nota fuera del rango permitido (0 - 100)');
+    return;
+  }
+
+  const estudiante = {
+    nombre: nombre,
+    apellidos: apellidos,
+    nota: Number(nota)
+  };
+
+  console.log('Nuevo estudiante registrado:', estudiante);
+
+  const registros = leerEstudiantes();
+  registros.push(estudiante);
+  guardarEstudiantes(registros);
+
+  console.log(`El registro ingresado fue del estudiante: ${estudiante.nombre} ${estudiante.apellidos}, con una nota de ${estudiante.nota}`);
+
+  form.reset();
+  mostrarEstudiantes();
+}
+
+//Funcion mostrar estudiantes en consola
+function mostrarEstudiantes() {
+  const lista = leerEstudiantes();
+  console.log('📚 Lista de estudiantes almacenados:');
+
+  if (lista.length === 0) {
+    console.log('No hay registros guardados.');
+  } else {
+    for (let i = 0; i < lista.length; i++) {
+      console.log(`#${i + 1}: ${lista[i].nombre} ${lista[i].apellidos} - Nota: ${lista[i].nota}`);
     }
-
-    // Crear objeto estudiante
-    const estudiante = {
-        nombre: data.nombre,
-        apellidos: data.apellidos,
-        nota: Number(data.nota)
-    };
-
-    console.log('Estudiante creado:', estudiante);
-
-    // Guardar en localStorage
-    let registros = JSON.parse(localStorage.getItem('estudiantes')) || [];
-    registros.push(estudiante);
-    localStorage.setItem('estudiantes', JSON.stringify(registros));
-
-    console.log(`El estudiante ${estudiante.nombre} ${estudiante.apellidos} fue registrado correctamente.`);
-
-    form.reset();
-
-    // Mostrar lista actualizada en consola
-    cargarEstudiantes();
-};
+  }
+}
 
 // Cargar y mostrar los registros almacenados
 const cargarEstudiantes = () => {
