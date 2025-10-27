@@ -12,7 +12,7 @@ mostrar();
 
 
 //Intento de datos ingresados del formulario de manera remota
-const ESTUDIANTES_SEMILLA = [
+const ESTUDIANTES = [
   { nombre: 'Daniela', apellidos: 'Murillo Delgado', nota: 95 },
   { nombre: 'Joseph', apellidos: 'Sancho Porras', nota: 78 },
   { nombre: 'Elsiel', apellidos: 'Baltonado Serrano', nota: 88 }
@@ -35,14 +35,14 @@ function guardarEstudiantes(lista) {
 function inicializarDatos() {
   const lista = leerEstudiantes();
   if (lista.length === 0) {
-    console.log('No había estudiantes guardados, cargando semilla...');
-    guardarEstudiantes(ESTUDIANTES_SEMILLA);
+    console.log('Estudiantes sin ingresar');
+    guardarEstudiantes(ESTUDIANTES);
   }
 }
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('✅ Página cargada completamente');
+  console.log('Página cargada completamente');
 
   inicializarDatos();
 
@@ -122,7 +122,7 @@ function manejarFormulario(evento) {
 //Funcion mostrar estudiantes en consola
 function mostrarEstudiantes() {
   const lista = leerEstudiantes();
-  console.log('📚 Lista de estudiantes almacenados:');
+  console.log('Lista de estudiantes almacenados:');
 
   if (lista.length === 0) {
     console.log('No hay registros guardados.');
