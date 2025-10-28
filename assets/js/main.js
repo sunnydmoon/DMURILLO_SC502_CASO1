@@ -69,7 +69,7 @@ fetch('data.json')
 // Función principal para manejar el formulario
 function manejarFormulario(evento) {
   evento.preventDefault();
-  console.log('Envío del formulario detectado');
+  console.log('Envío del formulario en proceso');
 
   const form = document.querySelector('#formEstudiante');
   const nombre = form.nombre.value.trim();
@@ -97,7 +97,7 @@ function manejarFormulario(evento) {
   }
 
   if (nota < 0 || nota > 100) {
-    console.log('Nota fuera del rango permitido (0 - 100)');
+    console.log('La nota no cumple con los requerimientos, intentelo otra vez');
     return;
   }
 
